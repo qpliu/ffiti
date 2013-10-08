@@ -1,0 +1,7 @@
+ffiti
+
+A simple geolocation web app.
+
+For Google App Engine: dev_appserver.py ./appengine/app.yaml
+
+For a standalone server: GOPATH=`pwd` go build

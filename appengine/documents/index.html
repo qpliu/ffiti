@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>ffiti</title>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+<script src="/threejs/three.min.js" type="text/javascript"></script>
+<script src="/threejs/CSS3DRenderer.js" type="text/javascript"></script>
+<script src="/ffiti.js" type="text/javascript"></script>
+</head>
+<body onload="ffiti()">
+<div id="status">javascript and geolocation permissions required</div>
+<div id="about" style="display:none;"><a href="https://github.com/qpliu/ffiti">ffiti</a><br/><a href="http://threejs.org/">three.js</a></div>
+<table id="pos" style="display:none;">
+<tbody>
+<tr><td>lat</td><td id="lat"></td></tr>
+<tr><td>lng</td><td id="lng"></td></tr>
+<tr><td>alt</td><td id="alt"></td></tr>
+<tr><td>acc</td><td id="acc"></td></tr>
+<tr><td>altacc</td><td id="altacc"></td></tr>
+<tr><td>hdg</td><td id="hdg"></td></tr>
+<tr><td>spd</td><td id="spd"></td></tr>
+<tr><td>alpha</td><td id="alpha"></td></tr>
+<tr><td>beta</td><td id="beta"></td></tr>
+<tr><td>gamma</td><td id="gamma"></td></tr>
+<tr><td>bounds</td><td id="bounds"></td></tr>
+<tr><td>camerapos</td><td id="camerapos"></td></tr>
+<tr><td colspan="2" id="posts"></td></tr>
+<tbody>
+</table>
+<div id="input" style="display:none;">
+<textarea id="msg"></textarea>
+<input id="post" type="button" value="Post"/>
+<input id="cancel" type="button" value="Cancel"/>
+</div>
+<div id="viewport"></div>
+</body>
+</html>
