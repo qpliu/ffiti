@@ -1,6 +1,8 @@
 ffiti
 
-A simple geolocation web app.
+A simple geolocation web app: https://ffiti-app.appspot.com/
+
+Source code: https://github.com/qpliu/ffiti
 
 For Google App Engine: dev_appserver.py ./appengine/app.yaml
 
