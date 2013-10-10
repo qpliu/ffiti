@@ -13,13 +13,14 @@ function ffiti() {
         camera:null,
         renderer:null,
         scenePosts:[],
+        inputVisible:false,
+        aboutVisible:false,
     };
 
     function initialize() {
         state.initialized = true;
         state.stale = true;
-        $("#status").hide();
-        $("#input").show();
+        $("#unsupported").hide();
         window.addEventListener("deviceorientation", updateOrientation, false);
         state.renderer = new THREE.CSS3DRenderer();
         state.camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 50, 1000);
@@ -28,7 +29,39 @@ function ffiti() {
         state.renderer.setSize(window.innerWidth, window.innerHeight);
         state.renderer.domElement.style.position = "absolute";
         $("#viewport").append(state.renderer.domElement);
+        $(state.renderer.domElement).click(function() {
+            if (!state.inputVisible) {
+                state.inputVisible = true;
+                $("#input").fadeIn();
+                if (state.aboutVisible) {
+                    state.aboutVisible = false;
+                    $("#about").fadeOut();
+                }
+            } else if (!state.aboutVisible) {
+                state.inputVisible = false;
+                $("#input").fadeOut();
+                state.aboutVisible = true;
+                $("#about").fadeIn();
+            } else {
+                state.inputVisible = false;
+                $("#input").fadeOut();
+                state.aboutVisible = false;
+                $("#about").fadeOut();
+            }
+        });
         window.addEventListener("resize", updateSize, false);
+        $.ajax({
+            type:"GET",
+            url:"/v1/version",
+            dataType:"text",
+            success:function(data, status) {
+                $("#version").text("version " + data);
+                setTimeout(function() { $("#about").fadeOut(); }, 2000);
+            },
+            error:function(xhr, status) {
+                setTimeout(function() { $("#about").fadeOut(); }, 2000);
+            },
+        });
     }
 
     function showPos(status) {
@@ -163,6 +196,8 @@ function ffiti() {
     $("#post").click(function() {
         var msg = $("#msg").val();
         $("#msg").val(null);
+        state.inputVisible = false;
+        $("#input").fadeOut();
         $.ajax({
             type:"POST",
             url:"/v1/post",
@@ -172,6 +207,11 @@ function ffiti() {
                 showPos("post");
             },
         });
+    });
+
+    $("#cancel").click(function() {
+        state.inputVisible = false;
+        $("#input").fadeOut();
     });
 
     state.watchId = navigator.geolocation && navigator.geolocation.watchPosition(updatePos);
