@@ -7,13 +7,10 @@ import (
 	"net/http"
 )
 
-const (
-	VERSION = "0.0"
-)
-
 type Config struct {
 	DataStore DataStore
 	Documents string
+	Version   string
 }
 
 type Posts struct {
@@ -63,7 +60,7 @@ func Init(serveMux *http.ServeMux, config Config) error {
 	})
 
 	serveMux.HandleFunc("/v1/version", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(VERSION))
+		w.Write([]byte(config.Version))
 	})
 
 	return nil

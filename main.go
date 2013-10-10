@@ -21,6 +21,7 @@ func main() {
 	if err := ffiti.Init(serveMux, ffiti.Config{
 		DataStore: dataStore,
 		Documents: documents,
+		Version:   "standalone",
 	}); err != nil {
 		panic(err.Error())
 	}
