@@ -18,7 +18,7 @@ function ffiti() {
     function initialize() {
         state.initialized = true;
         state.stale = true;
-        $("#pos").show();
+        $("#status").hide();
         $("#input").show();
         window.addEventListener("deviceorientation", updateOrientation, false);
         state.renderer = new THREE.CSS3DRenderer();
@@ -137,7 +137,13 @@ function ffiti() {
         state.scenePosts = [];
         for (var i = 0; i < state.posts.length; i++) {
             var div = document.createElement("div");
-            $(div).text(state.posts[i].msg);
+            var lines = state.posts[i].msg.split("\n");
+            for (var j = 0; j < lines.length; j++) {
+                if (j > 0) {
+                    $(div).append(document.createElement("br"));
+                }
+                $(div).append(document.createTextNode(lines[j]));
+            }
             var scenePost = new THREE.CSS3DObject(div);
             setPosition(scenePost, state.posts[i].loc);
             setDirection(scenePost, state.posts[i].loc);
