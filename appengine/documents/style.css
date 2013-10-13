@@ -1,0 +1,14 @@
+#input {
+    z-index: 2;
+    position: absolute;
+}
+
+#about {
+    z-index: 2;
+    position: absolute;
+}
+
+#viewport {
+    z-index: 1;
+    position: absolute;
+}

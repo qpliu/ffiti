@@ -1,10 +1,11 @@
-function ffiti() {
+(function() {
     var state = {
         lat:0, lng:0, alt:null, acc:null, altacc:null, hdg:null, spd:null,
         alpha:0, beta:0, gamma:0,
         bounds:null,
         altbounds:null,
         posts:null,
+        interpolate:[],
         pending:false,
         stale:false,
         initialized:false,
@@ -118,6 +119,18 @@ function ffiti() {
     }
 
     function updatePos(pos) {
+        var dlat = pos.coords.latitude - state.lat;
+        var dlng = pos.coords.longitude - state.lng;
+        var dalt = pos.coords.altitude - state.alt;
+        state.interpolate = [];
+        for (var i = 0; i < 20; i++) {
+            var p = {
+                lat: state.lat + i*dlat/20,
+                lng: state.lng + i*dlng/20,
+                alt: state.alt + i*dalt/20,
+            };
+            state.interpolate.push(p);
+        }
         state.lat = pos.coords.latitude;
         state.lng = pos.coords.longitude;
         state.alt = pos.coords.altitude;
@@ -126,9 +139,22 @@ function ffiti() {
         state.hdg = pos.coords.heading;
         state.spd = pos.coords.speed;
         showPos("pos="+pos);
-        setPosition(state.camera, state);
+        animate();
         $("#camerapos").text(state.camera.position.x+","+state.camera.position.y+","+state.camera.position.z);
+    }
+
+    function animate() {
+        if (state.interpolate.length == 0) {
+            setPosition(state.camera, state);
+            setDirection(state.camera, state);
+            state.renderer.render(state.scene, state.camera);
+            return;
+        }
+        var pos = state.interpolate.shift();
+        setPosition(state.camera, pos);
+        setDirection(state.camera, state);
         state.renderer.render(state.scene, state.camera);
+        requestAnimationFrame(animate);
     }
 
     function setDirection(obj, loc) {
@@ -154,7 +180,7 @@ function ffiti() {
     }
 
     function updateOrientation(orient) {
-        if (state.stale || Math.abs(dangle(orient.alpha, state.alpha)) > 2 || Math.abs(dangle(orient.beta, state.beta)) > 2 || Math.abs(dangle(orient.gamma, state.gamma)) > 2) {
+        if (state.stale || Math.abs(dangle(orient.alpha, state.alpha)) > 1 || Math.abs(dangle(orient.beta, state.beta)) > 1 || Math.abs(dangle(orient.gamma, state.gamma)) > 1) {
             state.alpha = orient.alpha;
             state.beta = orient.beta;
             state.gamma = orient.gamma;
@@ -193,26 +219,28 @@ function ffiti() {
         state.renderer.render(state.scene, state.camera);
     }
 
-    $("#post").click(function() {
-        var msg = $("#msg").val();
-        $("#msg").val(null);
-        state.inputVisible = false;
-        $("#input").fadeOut();
-        $.ajax({
-            type:"POST",
-            url:"/v1/post",
-            data:"lat="+state.lat+"&lng="+state.lng+"&alt="+state.alt+"&acc="+state.acc+"&altacc="+state.altacc+"&hdg="+state.hdg+"&spd="+state.spd+"&alpha="+state.alpha+"&beta="+state.beta+"&gamma="+state.gamma+"&msg="+encodeURIComponent(msg),
-            success:function(data, status) {
-                state.stale = true;
-                showPos("post");
-            },
+    $(document).ready(function() {
+        $("#post").click(function() {
+            var msg = $("#msg").val();
+            $("#msg").val(null);
+            state.inputVisible = false;
+            $("#input").fadeOut();
+            $.ajax({
+                type:"POST",
+                url:"/v1/post",
+                data:"lat="+state.lat+"&lng="+state.lng+"&alt="+state.alt+"&acc="+state.acc+"&altacc="+state.altacc+"&hdg="+state.hdg+"&spd="+state.spd+"&alpha="+state.alpha+"&beta="+state.beta+"&gamma="+state.gamma+"&msg="+encodeURIComponent(msg),
+                success:function(data, status) {
+                    state.stale = true;
+                    showPos("post");
+                },
+            });
         });
-    });
 
-    $("#cancel").click(function() {
-        state.inputVisible = false;
-        $("#input").fadeOut();
-    });
+        $("#cancel").click(function() {
+            state.inputVisible = false;
+            $("#input").fadeOut();
+        });
 
-    state.watchId = navigator.geolocation && navigator.geolocation.watchPosition(updatePos);
-}
+        state.watchId = navigator.geolocation && navigator.geolocation.watchPosition(updatePos);
+    });
+})()
