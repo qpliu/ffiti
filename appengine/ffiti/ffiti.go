@@ -19,7 +19,9 @@ type Posts struct {
 }
 
 func Init(serveMux *http.ServeMux, config Config) error {
-	serveMux.Handle("/", http.FileServer(http.Dir(config.Documents)))
+	versionedRoot := "/" + config.Version + "/"
+	serveMux.Handle(versionedRoot, http.StripPrefix(versionedRoot, http.FileServer(http.Dir(config.Documents))))
+	serveMux.Handle("/", http.RedirectHandler(versionedRoot, http.StatusTemporaryRedirect))
 
 	serveMux.HandleFunc("/v1/post", func(w http.ResponseWriter, r *http.Request) {
 		post, err := data.GetPost(r)
@@ -34,7 +36,7 @@ func Init(serveMux *http.ServeMux, config Config) error {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
-		log.Printf("/v1/post:loc=%v",post.Location)
+		log.Printf("/v1/post:loc=%v", post.Location)
 		w.WriteHeader(http.StatusCreated)
 	})
 
@@ -45,7 +47,7 @@ func Init(serveMux *http.ServeMux, config Config) error {
 			http.Error(w, "Bad request", http.StatusBadRequest)
 			return
 		}
-		log.Printf("/v1/get:loc=%v",loc)
+		log.Printf("/v1/get:loc=%v", loc)
 		result := Posts{Bounds: loc.Bounds()}
 		storage := config.DataStore.Storage(r)
 		for _, key := range loc.Keys() {
