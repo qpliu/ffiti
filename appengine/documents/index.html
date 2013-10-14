@@ -9,13 +9,13 @@
 <script src="/ffiti.js" type="text/javascript"></script>
 </head>
 <body>
-<div id="input" style="display:none;">
-<textarea id="msg"></textarea>
-<input id="post" type="button" value="Post"/>
-<input id="cancel" type="button" value="Cancel"/>
+<div id="input" class="overlay" style="display:none;">
+    <textarea id="msg"></textarea>
+    <input id="post" type="button" value="Post"/>
+    <input id="cancel" type="button" value="Cancel"/>
 </div>
 <div id="viewport"></div>
-<div id="about">
+<div id="about" class="overlay">
     <a href="https://ffiti-app.appspot.com">ffiti</a>
     <span id="version"></span>
     <blockquote>
@@ -23,20 +23,20 @@
         A simple app to post and view short text messages at your location.
         </p>
         <p>
-        Get the <a href="https://github.com/qpliu/ffiti">source code</a>.
+        Source code: <a href="https://github.com/qpliu/ffiti">https://github.com/qpliu/ffiti</a>
         </p>
         <p>
         Built with:
         <ul>
             <li><a href="http://threejs.org/">three.js</a></li>
             <li><a href="http://jquery.com/">jQuery</a></li>
-            <li><a href="http://golang.org/">Go</a></li>
+            <li><a href="https://developers.google.com/appengine/docs/go/">App Engine for Go</a></li>
         </ul>
         </p>
     </blockquote>
     <div id="unsupported">
-        This app cannot work with JavaScript disabled or without geolocation
-        permissions.
+        This app cannot work with JavaScript disabled or without
+            geolocation permissions.
     </div>
 </div>
 <table id="debug" style="display:none;">
