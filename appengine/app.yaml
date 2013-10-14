@@ -1,5 +1,5 @@
 application: ffiti-app
-version: 0.1
+version: 2
 runtime: go
 api_version: go1
 
