@@ -146,19 +146,19 @@
     function animate() {
         if (state.interpolate.length == 0) {
             setPosition(state.camera, state);
-            setDirection(state.camera, state);
+            setDirection(state.camera, state, 1);
             state.renderer.render(state.scene, state.camera);
             return;
         }
         var pos = state.interpolate.shift();
         setPosition(state.camera, pos);
-        setDirection(state.camera, state);
+        setDirection(state.camera, state, 1);
         state.renderer.render(state.scene, state.camera);
         requestAnimationFrame(animate);
     }
 
-    function setDirection(obj, loc) {
-        obj.lookAt(new THREE.Vector3(obj.position.x + Math.sin(loc.alpha*Math.PI/180), obj.position.y + 0, obj.position.z + Math.cos(loc.alpha*Math.PI/180)));
+    function setDirection(obj, loc, sign) {
+        obj.lookAt(new THREE.Vector3(obj.position.x + sign*Math.sin(loc.alpha*Math.PI/180), obj.position.y + sign*0, obj.position.z + sign*Math.cos(loc.alpha*Math.PI/180)));
     }
 
     function setPosition(obj, loc) {
@@ -185,7 +185,7 @@
             state.beta = orient.beta;
             state.gamma = orient.gamma;
             showPos("orient="+orient);
-            setDirection(state.camera, state);
+            setDirection(state.camera, state, 1);
             state.renderer.render(state.scene, state.camera);
         }
     }
@@ -205,7 +205,7 @@
             }
             var scenePost = new THREE.CSS3DObject(div);
             setPosition(scenePost, state.posts[i].loc);
-            setDirection(scenePost, state.posts[i].loc);
+            setDirection(scenePost, state.posts[i].loc, -1);
             state.scenePosts.push(scenePost);
             state.scene.add(scenePost);
         }
