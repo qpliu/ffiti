@@ -14,3 +14,12 @@
     z-index: 1;
     position: absolute;
 }
+
+.dist {
+    font-size: x-small;
+    text-align: center;
+}
+
+.post {
+    text-align: center;
+}

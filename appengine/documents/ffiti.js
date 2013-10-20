@@ -141,6 +141,7 @@
         showPos("pos="+pos);
         animate();
         $("#camerapos").text(state.camera.position.x+","+state.camera.position.y+","+state.camera.position.z);
+        updateScene();
     }
 
     function animate() {
@@ -196,6 +197,7 @@
         state.scenePosts = [];
         for (var i = 0; i < state.posts.length; i++) {
             var div = document.createElement("div");
+            $(div).addClass("post");
             var lines = state.posts[i].msg.split("\n");
             for (var j = 0; j < lines.length; j++) {
                 if (j > 0) {
@@ -203,6 +205,13 @@
                 }
                 $(div).append(document.createTextNode(lines[j]));
             }
+            if ($("input:checkbox[name=showdist]:checked").val()) {
+                var distdiv = document.createElement("div");
+                $(div).append(distdiv);
+                $(distdiv).addClass("dist");
+                $(distdiv).text(" ("+formatFeet(dist(state.posts[i].loc, state))+")");
+            }
+
             var scenePost = new THREE.CSS3DObject(div);
             setPosition(scenePost, state.posts[i].loc);
             setDirection(scenePost, state.posts[i].loc, -1);
@@ -217,6 +226,25 @@
         state.camera.updateProjectionMatrix();
         state.renderer.setSize(window.innerWidth, window.innerHeight);
         state.renderer.render(state.scene, state.camera);
+    }
+
+    var EARTH_RADIUS = 6371009;
+
+    function dist(pt1, pt2) {
+        var dlat = (pt1.lat - pt2.lat)*Math.PI/180;
+        var dlng = (pt1.lng - pt2.lng)*Math.PI/180;
+        var sdlat2 = Math.sin(dlat/2);
+        var sdlng2 = Math.sin(dlng/2);
+        var clat1 = Math.cos(pt1.lat*Math.PI/180);
+        var clat2 = Math.cos(pt2.lat*Math.PI/180);
+        var a = sdlat2*sdlat2 + clat1*clat2*sdlng2*sdlng2;
+        var d = 2*EARTH_RADIUS*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var dalt = pt1.alt - pt2.alt;
+        return Math.sqrt(d*d + dalt*dalt);
+    }
+
+    function formatFeet(meters) {
+        return Math.round(meters*3.2808399) + "ft";
     }
 
     $(document).ready(function() {
@@ -240,6 +268,8 @@
             state.inputVisible = false;
             $("#input").fadeOut();
         });
+
+        $("#showdist").change(updateScene);
 
         state.watchId = navigator.geolocation && navigator.geolocation.watchPosition(updatePos);
     });
